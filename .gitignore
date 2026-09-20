@@ -15,6 +15,9 @@ env/
 .idea/
 *.swp
 
+# CSV exports (mat -> csv 변환 파일)
+data/csv/
+
 # OS
 Thumbs.db
 .DS_Store

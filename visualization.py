@@ -21,6 +21,7 @@ from config import (
 from signal_analysis import (
     compute_fft,
     compute_envelope_spectrum,
+    compute_squared_envelope_spectrum_method1,
     calculate_defect_frequencies,
 )
 
@@ -323,3 +324,223 @@ def _save_figure(fig: plt.Figure, filename: str) -> None:
     filepath = os.path.join(RESULTS_DIR, filename)
     fig.savefig(filepath, dpi=FIGURE_DPI, bbox_inches="tight")
     print(f"  [저장] {filepath}")
+
+
+# =========================================================================
+# Method 1: 원신호 제곱 엔벨로프 스펙트럼 (Smith & Randall 2015, §5.1)
+# =========================================================================
+
+def plot_method1_analysis(data: dict, save: bool = True) -> plt.Figure:
+    """
+    논문 Method 1을 적용한 단일 데이터셋 분석 플롯을 생성한다.
+
+    (a) 원신호 시간 영역 파형
+    (b) 제곱 엔벨로프 — 시간 영역
+    (c) 제곱 엔벨로프 스펙트럼 + 결함 주파수 마커
+
+    Parameters
+    ----------
+    data : dict
+        data_loader.load_mat_file()의 반환값
+    save : bool
+        True이면 results/ 디렉토리에 이미지 저장
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    signal = data["signal"]
+    info = data["info"]
+    key = data["key"]
+    rpm = info["rpm"]
+
+    defect_freqs = calculate_defect_frequencies(rpm)
+    env_freqs, env_mag, sq_envelope = (
+        compute_squared_envelope_spectrum_method1(signal)
+    )
+    time_axis = np.arange(len(signal)) / SAMPLING_RATE
+
+    fig, axes = plt.subplots(3, 1, figsize=(14, 12))
+    fig.suptitle(
+        f"Method 1 — {key}  |  {info['description']}",
+        fontsize=14,
+        fontweight="bold",
+        y=0.98,
+    )
+
+    # (a) 원신호 시간 영역
+    _plot_time_domain(axes[0], time_axis, signal)
+
+    # (b) 제곱 엔벨로프 시간 영역
+    _plot_squared_envelope_time(axes[1], time_axis, sq_envelope, defect_freqs)
+
+    # (c) 제곱 엔벨로프 스펙트럼
+    _plot_squared_envelope_spectrum(
+        axes[2], env_freqs, env_mag, defect_freqs, info,
+    )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+
+    if save:
+        _save_figure(fig, f"method1_{key}.png")
+
+    return fig
+
+
+def plot_method1_all_overview(
+    all_data: dict,
+    save: bool = True,
+) -> plt.Figure:
+    """
+    모든 데이터셋의 Method 1 제곱 엔벨로프 스펙트럼을 한 화면에 비교한다.
+
+    Parameters
+    ----------
+    all_data : dict
+        {dataset_key: load_mat_file() 반환값, ...}
+    save : bool
+        True이면 results/ 디렉토리에 이미지 저장
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    keys = list(all_data.keys())
+    n = len(keys)
+
+    fig, axes = plt.subplots(n, 1, figsize=(14, 3 * n), sharex=True)
+    fig.suptitle(
+        "Method 1 — 전체 데이터셋 제곱 엔벨로프 스펙트럼 비교\n"
+        "(원신호 → 힐베르트 → 제곱 엔벨로프 → FFT, 필터 없음)",
+        fontsize=14,
+        fontweight="bold",
+        y=0.99,
+    )
+
+    rpm = list(all_data.values())[0]["info"]["rpm"]
+    defect_freqs = calculate_defect_frequencies(rpm)
+
+    for i, key in enumerate(keys):
+        data = all_data[key]
+        env_freqs, env_mag, _ = compute_squared_envelope_spectrum_method1(
+            data["signal"]
+        )
+        _plot_squared_envelope_spectrum(
+            axes[i], env_freqs, env_mag, defect_freqs,
+            data["info"],
+            title=f"{key} — {data['info']['description']}",
+        )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.97])
+
+    if save:
+        _save_figure(fig, "method1_overview_all.png")
+
+    return fig
+
+
+def plot_method1_comparison(
+    normal_data: dict,
+    fault_data: dict,
+    save: bool = True,
+) -> plt.Figure:
+    """
+    Method 1 기준으로 정상 vs 결함 제곱 엔벨로프 스펙트럼을 비교한다.
+
+    Parameters
+    ----------
+    normal_data : dict
+        Normal 데이터셋 (load_mat_file 반환값)
+    fault_data : dict
+        결함 데이터셋 (load_mat_file 반환값)
+    save : bool
+        True이면 results/ 디렉토리에 이미지 저장
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    fault_info = fault_data["info"]
+    fault_key = fault_data["key"]
+    rpm = fault_info["rpm"]
+    defect_freqs = calculate_defect_frequencies(rpm)
+
+    norm_freqs, norm_mag, _ = compute_squared_envelope_spectrum_method1(
+        normal_data["signal"]
+    )
+    fault_freqs, fault_mag, _ = compute_squared_envelope_spectrum_method1(
+        fault_data["signal"]
+    )
+
+    fig, axes = plt.subplots(2, 1, figsize=(14, 8), sharex=True)
+    fig.suptitle(
+        f"Method 1 — 제곱 엔벨로프 스펙트럼 비교: Normal vs {fault_key}",
+        fontsize=14,
+        fontweight="bold",
+        y=0.98,
+    )
+
+    _plot_squared_envelope_spectrum(
+        axes[0], norm_freqs, norm_mag, defect_freqs,
+        normal_data["info"], title="Normal_1 (정상)",
+    )
+    _plot_squared_envelope_spectrum(
+        axes[1], fault_freqs, fault_mag, defect_freqs,
+        fault_info, title=f"{fault_key} ({fault_info['description']})",
+    )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+
+    if save:
+        _save_figure(fig, f"method1_comparison_Normal_vs_{fault_key}.png")
+
+    return fig
+
+
+# =========================================================================
+# Method 1 전용 내부 헬퍼
+# =========================================================================
+
+def _plot_squared_envelope_time(
+    ax: plt.Axes,
+    time: np.ndarray,
+    sq_envelope: np.ndarray,
+    defect_freqs: dict,
+) -> None:
+    """제곱 엔벨로프의 시간 영역 파형을 그린다."""
+    ax.plot(time, sq_envelope, linewidth=0.3, color="#8E44AD")
+    ax.set_title("(b) 제곱 엔벨로프 (시간 영역)", fontsize=11)
+    ax.set_xlabel("시간 (초)")
+    ax.set_ylabel("진폭²")
+    ax.grid(True, alpha=0.3)
+
+    shaft_freq = defect_freqs["shaft_freq"]
+    shaft_period = 1.0 / shaft_freq
+    if time[-1] > 5 * shaft_period:
+        ax.set_xlim(0, 10 * shaft_period)
+
+
+def _plot_squared_envelope_spectrum(
+    ax: plt.Axes,
+    freqs: np.ndarray,
+    magnitude: np.ndarray,
+    defect_freqs: dict,
+    info: dict,
+    title: str | None = None,
+) -> None:
+    """제곱 엔벨로프 스펙트럼에 결함 주파수 마커를 표시한다."""
+    freq_mask = freqs <= ENVELOPE_PLOT_FREQ_MAX
+    ax.plot(freqs[freq_mask], magnitude[freq_mask],
+            linewidth=0.5, color="#8E44AD")
+
+    _add_defect_markers(ax, defect_freqs, info)
+
+    ax.set_title(
+        title or "(c) 제곱 엔벨로프 스펙트럼 (Method 1)",
+        fontsize=11,
+    )
+    ax.set_xlabel("주파수 (Hz)")
+    ax.set_ylabel("진폭²")
+    ax.set_xlim(0, ENVELOPE_PLOT_FREQ_MAX)
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="upper right", fontsize=7, ncol=2)

@@ -51,9 +51,59 @@ def compute_fft(signal: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 # 엔벨로프 스펙트럼 분석
 # =========================================================================
 
+def compute_squared_envelope_spectrum_method1(
+    signal: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    논문 Method 1: 원신호의 제곱 엔벨로프 스펙트럼을 계산한다.
+
+    Smith & Randall (2015), Section 5.1 — "Envelope analysis of the raw signal"
+    밴드패스 필터 없이, 원신호 전체 대역(full bandwidth)에 대해
+    제곱 엔벨로프 스펙트럼(squared envelope spectrum)을 구한다.
+
+    분석 파이프라인:
+        1. 원신호 → 힐베르트 변환 → 해석 신호(analytic signal) 생성
+        2. |해석 신호|² → 제곱 엔벨로프(squared envelope) 추출
+        3. DC 성분 제거 (평균 차감)
+        4. 제곱 엔벨로프에 FFT 적용 → 제곱 엔벨로프 스펙트럼
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        시간 영역 진동 신호 (1D, 원신호 그대로)
+
+    Returns
+    -------
+    freqs : np.ndarray
+        주파수 축 (Hz)
+    sq_env_magnitude : np.ndarray
+        제곱 엔벨로프 스펙트럼 진폭
+    squared_envelope : np.ndarray
+        시간 영역의 제곱 엔벨로프 (시간 영역 플롯에 사용)
+    """
+    # 1단계: 힐베르트 변환으로 해석 신호 생성 (필터링 없이 원신호 직접 사용)
+    analytic_signal = hilbert(signal)
+
+    # 2단계: 제곱 엔벨로프 추출 — envelope² = |analytic_signal|²
+    envelope = np.abs(analytic_signal)
+    squared_envelope = envelope ** 2
+
+    # 3단계: DC 성분 제거 (평균 차감)
+    squared_envelope_ac = squared_envelope - np.mean(squared_envelope)
+
+    # 4단계: 제곱 엔벨로프에 FFT 적용
+    freqs, sq_env_magnitude = compute_fft(squared_envelope_ac)
+
+    return freqs, sq_env_magnitude, squared_envelope
+
+
 def compute_envelope_spectrum(signal: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """
-    엔벨로프 스펙트럼(Squared Envelope Spectrum)을 계산한다.
+    밴드패스 엔벨로프 스펙트럼을 계산한다 (기존 방식 유지).
+
+    주의: 이 함수는 밴드패스 필터(2~5 kHz)를 적용하므로
+    논문의 Method 1과는 다르다. Method 1은
+    compute_squared_envelope_spectrum_method1()을 사용할 것.
 
     분석 파이프라인:
         1. 밴드패스 필터 (Butterworth, 2~5 kHz)
