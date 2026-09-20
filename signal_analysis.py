@@ -97,6 +97,98 @@ def compute_squared_envelope_spectrum_method1(
     return freqs, sq_env_magnitude, squared_envelope
 
 
+def cepstrum_prewhiten(signal: np.ndarray) -> np.ndarray:
+    """
+    켑스트럼 프리화이트닝: 모든 주파수 성분의 크기를 균일화한다.
+
+    Smith & Randall (2015), Section 5.2 참조.
+    원래 Sawalhi & Randall (2011)에서 제안된 기법.
+
+    원리:
+        FFT 스펙트럼의 크기(magnitude)를 모두 1로 만들고,
+        위상(phase) 정보만 보존한 뒤 IFFT로 시간 영역에 복원한다.
+        이렇게 하면 모든 주파수 대역의 PSD가 동일해지므로,
+        임펄스성이 높은 대역이 시간 영역에서 자연스럽게 부각된다.
+
+    수식:
+        X(f) = |X(f)| * exp(j*phi(f))   -- 원래 스펙트럼
+        X_pw(f) = exp(j*phi(f))          -- 크기=1, 위상만 유지
+        x_pw(t) = IFFT(X_pw(f))          -- 프리화이트닝된 신호
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        시간 영역 진동 신호 (1D)
+
+    Returns
+    -------
+    np.ndarray
+        프리화이트닝된 신호 (시간 영역)
+    """
+    n = len(signal)
+    X = np.fft.rfft(signal)
+
+    # 크기 스펙트럼 (0으로 나누기 방지)
+    magnitude = np.abs(X)
+    magnitude[magnitude == 0] = 1.0
+
+    # 크기를 1로 정규화 → 위상만 남김
+    X_pw = X / magnitude
+
+    # 시간 영역으로 복원
+    return np.fft.irfft(X_pw, n=n)
+
+
+def compute_squared_envelope_spectrum_method2(
+    signal: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    논문 Method 2: 켑스트럼 프리화이트닝 후 제곱 엔벨로프 스펙트럼을 계산한다.
+
+    Smith & Randall (2015), Section 5.2 — "Cepstrum prewhitening"
+
+    분석 파이프라인:
+        1. 켑스트럼 프리화이트닝 → 모든 주파수 성분 크기 균일화
+        2. 힐베르트 변환 → 해석 신호 생성
+        3. |해석 신호|² → 제곱 엔벨로프 추출
+        4. DC 성분 제거 (평균 차감)
+        5. 제곱 엔벨로프에 FFT 적용 → 제곱 엔벨로프 스펙트럼
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        시간 영역 진동 신호 (1D, 원신호 그대로)
+
+    Returns
+    -------
+    freqs : np.ndarray
+        주파수 축 (Hz)
+    sq_env_magnitude : np.ndarray
+        제곱 엔벨로프 스펙트럼 진폭
+    squared_envelope : np.ndarray
+        시간 영역의 제곱 엔벨로프 (시간 영역 플롯에 사용)
+    prewhitened : np.ndarray
+        프리화이트닝된 시간 영역 신호 (플롯에 사용)
+    """
+    # 1단계: 켑스트럼 프리화이트닝
+    prewhitened = cepstrum_prewhiten(signal)
+
+    # 2단계: 힐베르트 변환으로 해석 신호 생성
+    analytic_signal = hilbert(prewhitened)
+
+    # 3단계: 제곱 엔벨로프 추출
+    envelope = np.abs(analytic_signal)
+    squared_envelope = envelope ** 2
+
+    # 4단계: DC 성분 제거
+    squared_envelope_ac = squared_envelope - np.mean(squared_envelope)
+
+    # 5단계: 제곱 엔벨로프에 FFT 적용
+    freqs, sq_env_magnitude = compute_fft(squared_envelope_ac)
+
+    return freqs, sq_env_magnitude, squared_envelope, prewhitened
+
+
 def compute_envelope_spectrum(signal: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """
     밴드패스 엔벨로프 스펙트럼을 계산한다 (기존 방식 유지).

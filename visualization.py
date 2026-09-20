@@ -22,6 +22,7 @@ from signal_analysis import (
     compute_fft,
     compute_envelope_spectrum,
     compute_squared_envelope_spectrum_method1,
+    compute_squared_envelope_spectrum_method2,
     calculate_defect_frequencies,
 )
 
@@ -544,3 +545,250 @@ def _plot_squared_envelope_spectrum(
     ax.set_xlim(0, ENVELOPE_PLOT_FREQ_MAX)
     ax.grid(True, alpha=0.3)
     ax.legend(loc="upper right", fontsize=7, ncol=2)
+
+
+# =========================================================================
+# Method 2: 켑스트럼 프리화이트닝 (Smith & Randall 2015, §5.2)
+# =========================================================================
+
+def plot_method2_analysis(data: dict, save: bool = True) -> plt.Figure:
+    """
+    논문 Method 2를 적용한 단일 데이터셋 분석 플롯을 생성한다.
+
+    (a) 원신호 시간 영역 파형
+    (b) 프리화이트닝된 신호 (시간 영역)
+    (c) 제곱 엔벨로프 스펙트럼 + 결함 주파수 마커
+
+    Parameters
+    ----------
+    data : dict
+        data_loader.load_mat_file()의 반환값
+    save : bool
+        True이면 results/ 디렉토리에 이미지 저장
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    signal = data["signal"]
+    info = data["info"]
+    key = data["key"]
+    rpm = info["rpm"]
+
+    defect_freqs = calculate_defect_frequencies(rpm)
+    env_freqs, env_mag, sq_envelope, prewhitened = (
+        compute_squared_envelope_spectrum_method2(signal)
+    )
+    time_axis = np.arange(len(signal)) / SAMPLING_RATE
+
+    fig, axes = plt.subplots(3, 1, figsize=(14, 12))
+    fig.suptitle(
+        f"Method 2 (Cepstrum Prewhitening) — {key}  |  {info['description']}",
+        fontsize=14,
+        fontweight="bold",
+        y=0.98,
+    )
+
+    # (a) 원신호 시간 영역
+    _plot_time_domain(axes[0], time_axis, signal)
+
+    # (b) 프리화이트닝된 신호
+    _plot_prewhitened_time(axes[1], time_axis, prewhitened, defect_freqs)
+
+    # (c) 제곱 엔벨로프 스펙트럼
+    _plot_squared_envelope_spectrum(
+        axes[2], env_freqs, env_mag, defect_freqs, info,
+        title="(c) 제곱 엔벨로프 스펙트럼 (Method 2 — Prewhitening)",
+    )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+
+    if save:
+        _save_figure(fig, f"method2_{key}.png")
+
+    return fig
+
+
+def plot_method2_all_overview(
+    all_data: dict,
+    save: bool = True,
+) -> plt.Figure:
+    """
+    모든 데이터셋의 Method 2 제곱 엔벨로프 스펙트럼을 한 화면에 비교한다.
+
+    Parameters
+    ----------
+    all_data : dict
+        {dataset_key: load_mat_file() 반환값, ...}
+    save : bool
+        True이면 results/ 디렉토리에 이미지 저장
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    keys = list(all_data.keys())
+    n = len(keys)
+
+    fig, axes = plt.subplots(n, 1, figsize=(14, 3 * n), sharex=True)
+    fig.suptitle(
+        "Method 2 (Cepstrum Prewhitening) — 전체 데이터셋 제곱 엔벨로프 스펙트럼 비교",
+        fontsize=14,
+        fontweight="bold",
+        y=0.99,
+    )
+
+    rpm = list(all_data.values())[0]["info"]["rpm"]
+    defect_freqs = calculate_defect_frequencies(rpm)
+
+    for i, key in enumerate(keys):
+        data = all_data[key]
+        env_freqs, env_mag, _, _ = compute_squared_envelope_spectrum_method2(
+            data["signal"]
+        )
+        _plot_squared_envelope_spectrum(
+            axes[i], env_freqs, env_mag, defect_freqs,
+            data["info"],
+            title=f"{key} — {data['info']['description']}",
+        )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.97])
+
+    if save:
+        _save_figure(fig, "method2_overview_all.png")
+
+    return fig
+
+
+def plot_method2_comparison(
+    normal_data: dict,
+    fault_data: dict,
+    save: bool = True,
+) -> plt.Figure:
+    """
+    Method 2 기준으로 정상 vs 결함 제곱 엔벨로프 스펙트럼을 비교한다.
+
+    Parameters
+    ----------
+    normal_data : dict
+        Normal 데이터셋 (load_mat_file 반환값)
+    fault_data : dict
+        결함 데이터셋 (load_mat_file 반환값)
+    save : bool
+        True이면 results/ 디렉토리에 이미지 저장
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    fault_info = fault_data["info"]
+    fault_key = fault_data["key"]
+    rpm = fault_info["rpm"]
+    defect_freqs = calculate_defect_frequencies(rpm)
+
+    norm_freqs, norm_mag, _, _ = compute_squared_envelope_spectrum_method2(
+        normal_data["signal"]
+    )
+    fault_freqs, fault_mag, _, _ = compute_squared_envelope_spectrum_method2(
+        fault_data["signal"]
+    )
+
+    fig, axes = plt.subplots(2, 1, figsize=(14, 8), sharex=True)
+    fig.suptitle(
+        f"Method 2 — 제곱 엔벨로프 스펙트럼 비교: Normal vs {fault_key}",
+        fontsize=14,
+        fontweight="bold",
+        y=0.98,
+    )
+
+    _plot_squared_envelope_spectrum(
+        axes[0], norm_freqs, norm_mag, defect_freqs,
+        normal_data["info"], title="Normal_1 (정상)",
+    )
+    _plot_squared_envelope_spectrum(
+        axes[1], fault_freqs, fault_mag, defect_freqs,
+        fault_info, title=f"{fault_key} ({fault_info['description']})",
+    )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+
+    if save:
+        _save_figure(fig, f"method2_comparison_Normal_vs_{fault_key}.png")
+
+    return fig
+
+
+def plot_method_comparison(
+    data: dict,
+    save: bool = True,
+) -> plt.Figure:
+    """
+    단일 데이터셋에 대해 Method 1 vs Method 2 결과를 나란히 비교한다.
+
+    Parameters
+    ----------
+    data : dict
+        data_loader.load_mat_file()의 반환값
+    save : bool
+        True이면 results/ 디렉토리에 이미지 저장
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    signal = data["signal"]
+    info = data["info"]
+    key = data["key"]
+    rpm = info["rpm"]
+
+    defect_freqs = calculate_defect_frequencies(rpm)
+
+    m1_freqs, m1_mag, _ = compute_squared_envelope_spectrum_method1(signal)
+    m2_freqs, m2_mag, _, _ = compute_squared_envelope_spectrum_method2(signal)
+
+    fig, axes = plt.subplots(2, 1, figsize=(14, 8), sharex=True)
+    fig.suptitle(
+        f"Method 1 vs Method 2 — {key}  |  {info['description']}",
+        fontsize=14,
+        fontweight="bold",
+        y=0.98,
+    )
+
+    _plot_squared_envelope_spectrum(
+        axes[0], m1_freqs, m1_mag, defect_freqs, info,
+        title="Method 1 (Raw Signal)",
+    )
+    _plot_squared_envelope_spectrum(
+        axes[1], m2_freqs, m2_mag, defect_freqs, info,
+        title="Method 2 (Cepstrum Prewhitening)",
+    )
+
+    fig.tight_layout(rect=[0, 0, 1, 0.96])
+
+    if save:
+        _save_figure(fig, f"m1_vs_m2_{key}.png")
+
+    return fig
+
+
+# =========================================================================
+# Method 2 전용 내부 헬퍼
+# =========================================================================
+
+def _plot_prewhitened_time(
+    ax: plt.Axes,
+    time: np.ndarray,
+    prewhitened: np.ndarray,
+    defect_freqs: dict,
+) -> None:
+    """프리화이트닝된 신호의 시간 영역 파형을 그린다."""
+    ax.plot(time, prewhitened, linewidth=0.3, color="#16A085")
+    ax.set_title("(b) 프리화이트닝된 신호 (시간 영역)", fontsize=11)
+    ax.set_xlabel("시간 (초)")
+    ax.set_ylabel("진폭 (정규화)")
+    ax.grid(True, alpha=0.3)
+
+    shaft_freq = defect_freqs["shaft_freq"]
+    shaft_period = 1.0 / shaft_freq
+    if time[-1] > 5 * shaft_period:
+        ax.set_xlim(0, 10 * shaft_period)
