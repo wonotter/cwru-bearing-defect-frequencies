@@ -16,8 +16,16 @@ RESULTS_DIR = os.path.join(BASE_DIR, "results")
 
 # ---------------------------------------------------------------------------
 # 샘플링 설정
+#
+# CWRU 데이터셋은 그룹마다 샘플링 레이트가 다르다.
+#   - normal baseline     : 48 kHz
+#   - 48k drive end fault : 48 kHz
+#   - 12k drive end fault : 12 kHz
+#
+# 따라서 전역 상수 하나로 다룰 수 없고, DATASETS의 "fs" 값을 사용해야 한다.
+# 아래 상수는 fs 정보가 없을 때의 기본값(폴백)으로만 쓰인다.
 # ---------------------------------------------------------------------------
-SAMPLING_RATE = 48_000  # Hz (Normal Baseline + 48k Drive End Fault)
+DEFAULT_SAMPLING_RATE = 48_000  # Hz
 
 # ---------------------------------------------------------------------------
 # 베어링 사양: SKF 6205-2RS JEM (Drive End)
@@ -64,14 +72,23 @@ DEFECT_FREQ_COLORS = {
 }
 
 # ---------------------------------------------------------------------------
-# 데이터셋 매핑: 48kHz, 0.021", 1HP (1772 RPM)
+# 데이터셋 매핑
 #
+# 두 그룹을 함께 관리한다.
+#   1) BASE_KEYS  : 48kHz, 0.021", 1HP  — 기존 검증 대상
+#   2) PAPER_KEYS : 12kHz, 0.007", 0HP  — 논문(Alonso-González et al., 2023)
+#                   Fig.5~8 재현 대상
+#
+# "rpm"은 CWRU 문서상의 공칭값이며, 실제 분석에는 .mat 파일에 들어 있는
+# X{id}RPM 실측값을 우선 사용한다(data_loader 참조).
 # 파일명은 CWRU 원본 Recording ID를 그대로 유지한다.
 # ---------------------------------------------------------------------------
 DATASETS = {
+    # ---------------- 48kHz / 0.021" / 1HP ----------------
     "Normal_1": {
         "file": os.path.join(DATA_DIR, "normal_baseline", "98.mat"),
         "file_id": 98,
+        "fs": 48_000,
         "fault_type": "Normal",
         "fault_diameter_inch": None,
         "load_hp": 1,
@@ -81,6 +98,7 @@ DATASETS = {
     "IR021_1": {
         "file": os.path.join(DATA_DIR, "48k_drive_end_fault", "inch021_1HP", "214.mat"),
         "file_id": 214,
+        "fs": 48_000,
         "fault_type": "Inner Race",
         "fault_diameter_inch": 0.021,
         "load_hp": 1,
@@ -90,6 +108,7 @@ DATASETS = {
     "B021_1": {
         "file": os.path.join(DATA_DIR, "48k_drive_end_fault", "inch021_1HP", "227.mat"),
         "file_id": 227,
+        "fs": 48_000,
         "fault_type": "Ball",
         "fault_diameter_inch": 0.021,
         "load_hp": 1,
@@ -99,6 +118,7 @@ DATASETS = {
     "OR021@6_1": {
         "file": os.path.join(DATA_DIR, "48k_drive_end_fault", "inch021_1HP", "239.mat"),
         "file_id": 239,
+        "fs": 48_000,
         "fault_type": "Outer Race",
         "fault_diameter_inch": 0.021,
         "load_hp": 1,
@@ -109,6 +129,7 @@ DATASETS = {
     "OR021@3_1": {
         "file": os.path.join(DATA_DIR, "48k_drive_end_fault", "inch021_1HP", "251.mat"),
         "file_id": 251,
+        "fs": 48_000,
         "fault_type": "Outer Race",
         "fault_diameter_inch": 0.021,
         "load_hp": 1,
@@ -119,6 +140,7 @@ DATASETS = {
     "OR021@12_1": {
         "file": os.path.join(DATA_DIR, "48k_drive_end_fault", "inch021_1HP", "263.mat"),
         "file_id": 263,
+        "fs": 48_000,
         "fault_type": "Outer Race",
         "fault_diameter_inch": 0.021,
         "load_hp": 1,
@@ -126,7 +148,57 @@ DATASETS = {
         "or_position": "12:00 (하중대 반대)",
         "description": "외륜 결함 0.021\" @12시 (1HP, 1772 RPM)",
     },
+
+    # ---------------- 12kHz / 0.007" / 0HP (논문 Fig.5~8) ----------------
+    # 주의: normal baseline(97.mat)은 CWRU 원본이 48kHz로 수집되었다.
+    #       논문 본문은 12kHz로 기술하고 있으나 원본 스펙을 따른다.
+    "Normal_0": {
+        "file": os.path.join(DATA_DIR, "normal_baseline", "97.mat"),
+        "file_id": 97,
+        "fs": 48_000,
+        "fault_type": "Normal",
+        "fault_diameter_inch": None,
+        "load_hp": 0,
+        "rpm": 1797,
+        "description": "정상 베어링 (0HP, 1797 RPM) — 논문 Fig.7",
+    },
+    "IR007_0": {
+        "file": os.path.join(DATA_DIR, "12k_drive_end_fault", "inch007_0HP", "105.mat"),
+        "file_id": 105,
+        "fs": 12_000,
+        "fault_type": "Inner Race",
+        "fault_diameter_inch": 0.007,
+        "load_hp": 0,
+        "rpm": 1797,
+        "description": "내륜 결함 0.007\" (0HP, 1797 RPM) — 논문 Fig.5",
+    },
+    "B007_0": {
+        "file": os.path.join(DATA_DIR, "12k_drive_end_fault", "inch007_0HP", "118.mat"),
+        "file_id": 118,
+        "fs": 12_000,
+        "fault_type": "Ball",
+        "fault_diameter_inch": 0.007,
+        "load_hp": 0,
+        "rpm": 1797,
+        "description": "볼 결함 0.007\" (0HP, 1797 RPM) — 논문 Fig.8",
+    },
+    "OR007@6_0": {
+        "file": os.path.join(DATA_DIR, "12k_drive_end_fault", "inch007_0HP", "130.mat"),
+        "file_id": 130,
+        "fs": 12_000,
+        "fault_type": "Outer Race",
+        "fault_diameter_inch": 0.007,
+        "load_hp": 0,
+        "rpm": 1797,
+        "or_position": "6:00 (하중대 중심)",
+        "description": "외륜 결함 0.007\" @6시 (0HP, 1797 RPM) — 논문 Fig.6",
+    },
 }
+
+# 그룹별 데이터셋 키 목록
+BASE_KEYS = ["Normal_1", "IR021_1", "B021_1",
+             "OR021@6_1", "OR021@3_1", "OR021@12_1"]
+PAPER_KEYS = ["Normal_0", "IR007_0", "OR007@6_0", "B007_0"]
 
 # ---------------------------------------------------------------------------
 # 엔벨로프 분석 파라미터
@@ -147,3 +219,22 @@ FFT_PLOT_FREQ_MAX = 1_000       # FFT 플롯 x축 최대 주파수 (Hz)
 ENVELOPE_PLOT_FREQ_MAX = 500    # 엔벨로프 플롯 x축 최대 주파수 (Hz)
 N_HARMONICS = 5                 # 결함 주파수 고조파 표시 개수
 FIGURE_DPI = 150                # 저장 이미지 해상도
+
+# ---------------------------------------------------------------------------
+# 논문 재현(Fig.5~8) 전용 파라미터
+#
+# 논문 Fig.6은 x축 0~1000 Hz 범위에 BPFO 고조파 9개를 표시한다.
+# 진폭 단위는 g이며, 제곱 엔벨로프가 아닌 일반 엔벨로프(|Hilbert|)를 사용한다.
+#
+# 밴드패스가 필요한 이유:
+#   전대역 힐베르트 엔벨로프는 1~3 kHz 구조 모드와 3~5 kHz 하우징 공진이
+#   한 임펄스에 겹친다. 엔벨로프 파형이 날카로워져 BPFO 5~7차가 1~4차보다
+#   커지는(다시 올라가는) 왜곡이 생긴다. 12 kHz 데이터(나이퀴스트 6 kHz)에서
+#   SKF 6205 하우징 공진만 남기면(약 3.2~4.5 kHz) 논문 Fig.6처럼 고조파가
+#   단조 감소한다. 기존 2~5 kHz는 하한이 너무 낮아 이 왜곡을 막지 못한다.
+# ---------------------------------------------------------------------------
+PAPER_PLOT_FREQ_MAX = 1_000     # 논문 스타일 플롯 x축 최대 주파수 (Hz)
+PAPER_N_HARMONICS = 9           # 논문 스타일 플롯 고조파 표시 개수
+PAPER_BANDPASS_LOW = 3_200      # Hz, 하우징 공진 하한
+PAPER_BANDPASS_HIGH = 4_500     # Hz, 하우징 공진 상한
+PAPER_FILTER_ORDER = 8          # Butterworth 차수 (공진 분리용으로 다소 높임)
