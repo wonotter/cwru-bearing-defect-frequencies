@@ -27,6 +27,7 @@ from visualization import (
     plot_method_comparison,
     plot_paper_envelope_spectrum,
     print_harmonic_amplitudes,
+    plot_kurtogram,
 )
 
 # 논문 Fig.5~8과 대응하는 데이터셋 및 표시할 결함 주파수
@@ -44,16 +45,13 @@ def run_paper_reproduction():
 
     논문이 사용한 조건을 그대로 맞추는 것이 핵심이다.
         - 데이터: 12kHz Drive End, 결함 직경 0.007", 부하 0 HP, 1797 RPM
-        - 처리  : 3.2~4.5 kHz 하우징 공진 밴드패스 → 일반 엔벨로프(|Hilbert|) → FFT
+        - 처리  : Kurtogram이 고른 구간을 Butterworth 밴드패스 → 일반 엔벨로프 → FFT
         - 표시  : x축 0~1000 Hz, 해당 결함 주파수 고조파만 점선 표시
-
-    전대역 엔벨로프는 BPFO 5~7차가 다시 커져 Fig.6과 달라진다.
-    하우징 공진만 남기면 고조파가 단조 감소한다.
     """
     print("\n" + "=" * 60)
     print("  논문 Fig.5~8 재현")
     print("  12kHz | 0.007\" fault | 0HP (1797 RPM)")
-    print("  3.2~4.5 kHz 하우징 공진 밴드패스 + 일반 엔벨로프")
+    print("  Kurtogram 구간 Butterworth 밴드패스 + 일반 엔벨로프")
     print("=" * 60)
 
     paper_data = load_all_datasets(PAPER_KEYS)
@@ -66,6 +64,25 @@ def run_paper_reproduction():
         plot_paper_envelope_spectrum(data, freq_names=freq_names, save=True)
         for freq_name in freq_names:
             print_harmonic_amplitudes(data, freq_name)
+        plt.close("all")
+
+
+def run_kurtograms():
+    """
+    논문 데이터 4개의 Kurtogram을 저장한다.
+
+    각 그림은 주파수 구간마다 충격이 얼마나 강한지 보여 준다.
+    검은 테두리가 엔벨로프 밴드패스로 고른 구간이다.
+    """
+    print("\n" + "=" * 60)
+    print("  Kurtogram")
+    print("  논문 데이터 (12 kHz / 0.007\" / 0 HP, 정상은 48 kHz)")
+    print("=" * 60)
+
+    paper_data = load_all_datasets(PAPER_KEYS)
+    for key, data in paper_data.items():
+        print(f"\n  Kurtogram 계산 중: {key}")
+        plot_kurtogram(data, save=True)
         plt.close("all")
 
 
@@ -227,6 +244,7 @@ def main():
     # 논문 Fig.5~8 재현 + 축 동기 성분 제거 비교
     # ==================================================================
     run_paper_reproduction()
+    run_kurtograms()
     run_shaft_removal_comparison(all_data)
 
     # ------------------------------------------------------------------
@@ -237,9 +255,10 @@ def main():
     n_m1_vs_m2 = len(fault_keys)
     n_baseline = len(all_data) + len(fault_keys) + 1
     n_paper = len(PAPER_FIGURES)
+    n_kurtogram = len(PAPER_KEYS)
     n_shaft_removal = 4  # OR021@6_1 / IR021_1 × (제거 전, 제거 후)
     n_total = (n_baseline + n_m1 + n_m2 + n_m1_vs_m2
-               + n_paper + n_shaft_removal)
+               + n_paper + n_kurtogram + n_shaft_removal)
 
     print("\n" + "=" * 60)
     print("  분석 완료!")
@@ -254,6 +273,7 @@ def main():
     print(f"    - 결함 데이터 비교      : {n_m1_vs_m2}개")
     print("\n  === 논문 Fig.5~8 재현 (12kHz, 0.007\", 0HP) ===")
     print(f"    - 논문 대응 그림        : {n_paper}개")
+    print(f"    - Kurtogram             : {n_kurtogram}개")
     print(f"    - 축 동기 성분 제거 비교: {n_shaft_removal}개")
     print(f"\n  총 이미지 파일            : {n_total}개")
     print("\n  결과 저장 위치: results/")

@@ -7,6 +7,8 @@ CWRU 베어링 결함 주파수 검증 프로젝트 - 시각화 모듈
 
 import os
 
+from matplotlib.colors import Normalize
+from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -17,13 +19,16 @@ from config import (
     ENVELOPE_PLOT_FREQ_MAX,
     PAPER_PLOT_FREQ_MAX,
     PAPER_N_HARMONICS,
+    KURTOGRAM_MIN_BANDWIDTH,
     FIGURE_DPI,
 )
 from signal_analysis import (
     compute_fft,
     compute_bandpass_envelope_spectrum,
     compute_envelope_spectrum,
+    compute_kurtogram,
     compute_paper_envelope_spectrum,
+    envelope_band_from_kurtogram,
     compute_squared_envelope_spectrum_method1,
     compute_squared_envelope_spectrum_method2,
     calculate_defect_frequencies,
@@ -332,6 +337,139 @@ def _save_figure(fig: plt.Figure, filename: str) -> None:
     filepath = os.path.join(RESULTS_DIR, filename)
     fig.savefig(filepath, dpi=FIGURE_DPI, bbox_inches="tight")
     print(f"  [저장] {filepath}")
+
+
+# =========================================================================
+# Kurtogram
+# =========================================================================
+
+def _english_fault_label(info: dict) -> str:
+    """Kurtogram 제목에 쓸 결함 설명을 영어로 만든다."""
+    names = {
+        "Normal": "Normal Bearing",
+        "Inner Race": "Inner Race Fault",
+        "Outer Race": "Outer Race Fault",
+        "Ball": "Ball Fault",
+    }
+    label = names.get(info["fault_type"], info["fault_type"])
+    diameter = info.get("fault_diameter_inch")
+    if diameter:
+        label = f"{label} {diameter:.3f} in"
+    if info["fault_type"] == "Outer Race" and info.get("or_position"):
+        clock = str(info["or_position"]).split(":", 1)[0]
+        label = f"{label} at {clock} o'clock"
+    return f"{label} ({info['load_hp']} HP, {info['rpm']} RPM)"
+
+
+def plot_kurtogram(data: dict, save: bool = True) -> plt.Figure:
+    """
+    한 데이터셋의 Kurtogram을 그린다.
+
+    가로축은 주파수, 세로축은 "얼마나 잘게 나눴는지"이다.
+    색이 밝을수록 그 칸의 충격 점수가 높다.
+    엔벨로프에 쓰라고 고른 칸은 검은 테두리로 표시한다.
+
+    Parameters
+    ----------
+    data : dict
+        data_loader.load_mat_file()의 반환값
+    save : bool
+        True이면 results/ 디렉토리에 이미지 저장
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+    """
+    result = compute_kurtogram(data["signal"], data["fs"])
+    rows = result["rows"]
+    best = result["best"]
+    nyquist = data["fs"] / 2.0
+
+    all_scores = np.concatenate([row["kurtosis"] for row in rows])
+    # 색 범위는 실제로 비교하는 칸(폭 1000 Hz 이상) 기준으로 잡는다.
+    # 아주 좁은 칸 하나의 점수가 크면 나머지 칸이 전부 같은 색이 된다.
+    wide_scores = np.concatenate([
+        row["kurtosis"] for row in rows if row["bandwidth"] >= KURTOGRAM_MIN_BANDWIDTH
+    ])
+    color_norm = Normalize(
+        vmin=float(min(0.0, np.min(all_scores))),
+        vmax=float(np.max(wide_scores)),
+    )
+    colormap = plt.get_cmap("jet")
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for row_index, row in enumerate(rows):
+        bandwidth = row["bandwidth"]
+        for center, score in zip(row["centers"], row["kurtosis"]):
+            ax.add_patch(Rectangle(
+                (center - bandwidth / 2.0, row_index),
+                bandwidth,
+                1.0,
+                facecolor=colormap(color_norm(score)),
+                edgecolor="white",
+                linewidth=0.3,
+            ))
+
+    # 고른 칸만 검은 테두리
+    best_row = next(index for index, row in enumerate(rows) if row["level"] == best["level"])
+    ax.add_patch(Rectangle(
+        (best["low"], best_row),
+        best["bandwidth"],
+        1.0,
+        fill=False,
+        edgecolor="black",
+        linewidth=1.8,
+    ))
+
+    ax.set_xlim(0, nyquist)
+    ax.set_ylim(0, len(rows))
+    ax.set_yticks(np.arange(len(rows)) + 0.5)
+    ax.set_yticklabels([
+        f"Level {row['level']} ({row['bandwidth']:.0f} Hz)"
+        for row in rows
+    ])
+    ax.set_xlabel("Frequency (Hz)")
+    ax.set_ylabel("Level (Bandwidth)")
+    ax.set_title(
+        f"Kurtogram: {data['key']} — {_english_fault_label(data['info'])}\n"
+        f"K_max = {best['kurtosis']:.2f} at level {best['level']}, "
+        f"Center Frequency = {best['center']:.0f} Hz, "
+        f"Bandwidth = {best['bandwidth']:.0f} Hz",
+        fontsize=11,
+        fontweight="bold",
+    )
+
+    colorbar = fig.colorbar(
+        plt.cm.ScalarMappable(norm=color_norm, cmap=colormap),
+        ax=ax,
+        pad=0.02,
+    )
+    colorbar.set_label("Spectral Kurtosis")
+    fig.tight_layout()
+
+    if save:
+        filename = f"kurtogram_{data['key'].replace('@', 'at')}.png"
+        _save_figure(fig, filename)
+
+    _print_kurtogram_summary(data["key"], result)
+    return fig
+
+
+def _print_kurtogram_summary(key: str, result: dict) -> None:
+    """단계마다 가장 높은 칸과, 최종으로 고른 구간을 출력한다."""
+    print(f"\n  [{key}] Kurtogram")
+    print(f"    {'단계':>4} {'폭(Hz)':>10} {'최고 점수':>10} {'그 칸의 중심(Hz)':>16}")
+    for row in result["rows"]:
+        index = int(np.argmax(row["kurtosis"]))
+        print(
+            f"    {row['level']:4d} {row['bandwidth']:10.0f} "
+            f"{row['kurtosis'][index]:10.2f} {row['centers'][index]:16.0f}"
+        )
+    best = result["best"]
+    print(
+        f"    → 엔벨로프에 쓸 구간: {best['low']:.0f}~{best['high']:.0f} Hz "
+        f"(단계 {best['level']}, 점수 {best['kurtosis']:.2f})"
+    )
 
 
 # =========================================================================
@@ -801,6 +939,53 @@ def _plot_prewhitened_time(
 # 논문(Alonso-González et al., 2023) Fig.5~8 재현 플롯
 # =========================================================================
 
+_FAULT_CATEGORY_LABELS = {
+    "Inner Race": "Inner Race Fault",
+    "Outer Race": "Outer Race Fault",
+    "Ball": "Ball Fault",
+    "Normal": "Normal",
+}
+
+
+def _envelope_spectrum_title(
+    key: str,
+    info: dict,
+    band: tuple[float, float] | None,
+    remove_shaft_orders: bool,
+) -> str:
+    """
+    엔벨로프 스펙트럼 그림의 영어 제목을 만든다.
+
+    1행: Envelope Spectrum: {파일명} - {결함 종류} {결함 크기} ({부하}HP, {RPM} RPM)
+    2행: Kurtogram {하한}~{상한} Hz  (밴드패스를 쓴 경우에만)
+
+    RPM은 .mat 실측값이 아니라 config의 공칭값을 쓴다.
+    """
+    category = _FAULT_CATEGORY_LABELS.get(info["fault_type"], info["fault_type"])
+    diameter = info.get("fault_diameter_inch")
+    if diameter is not None:
+        fault_text = f'{category} {diameter:.3f}"'
+    else:
+        fault_text = category
+
+    # 외륜은 결함 위치(6시, 3시, 12시)가 파일마다 다르므로 제목에 포함한다.
+    position = info.get("or_position")
+    if position:
+        clock = position.split(":", 1)[0]
+        fault_text = f"{fault_text} @{clock}"
+
+    title = (
+        f"Envelope Spectrum: {key} - {fault_text} "
+        f"({info['load_hp']}HP, {info['rpm']} RPM)"
+    )
+    if remove_shaft_orders:
+        title += " [shaft orders removed]"
+    if band is not None:
+        low, high = band
+        title += f"\nKurtogram {low:.0f}~{high:.0f} Hz"
+    return title
+
+
 def plot_paper_envelope_spectrum(
     data: dict,
     freq_names: list[str] | None = None,
@@ -812,7 +997,7 @@ def plot_paper_envelope_spectrum(
     논문 Fig.5~8 형식의 엔벨로프 스펙트럼 단일 플롯을 생성한다.
 
     논문 그림의 구성 요소를 그대로 따른다.
-        - 하우징 공진 대역(3.2~4.5 kHz) 밴드패스 후 일반 엔벨로프(|Hilbert|)
+        - Kurtogram이 고른 구간을 Butterworth 밴드패스한 뒤 일반 엔벨로프(|Hilbert|)
         - 진폭 단위 g, x축 0 ~ PAPER_PLOT_FREQ_MAX(1000) Hz
         - 해당 결함 유형의 특성 주파수 고조파만 빨간 점선으로 표시
 
@@ -856,8 +1041,13 @@ def plot_paper_envelope_spectrum(
             remove_shaft_orders=True,
             shaft_freq=defect_freqs["shaft_freq"],
         )
+        band = None
     else:
-        env_freqs, env_mag, _ = compute_paper_envelope_spectrum(signal, fs)
+        low, high = envelope_band_from_kurtogram(signal, fs)
+        env_freqs, env_mag, _ = compute_paper_envelope_spectrum(
+            signal, fs, band=(low, high)
+        )
+        band = (low, high)
 
     # 표시할 결함 주파수 결정
     primary = FAULT_TYPE_TO_FREQ.get(info["fault_type"])
@@ -889,9 +1079,10 @@ def plot_paper_envelope_spectrum(
                 label=f"{freq_name} ({base:.1f} Hz)" if i == 1 else None,
             )
 
-    suffix = " [축 동기 성분 제거]" if remove_shaft_orders else ""
     ax.set_title(
-        f"엔벨로프 스펙트럼: {key} — {info['description']}{suffix}",
+        _envelope_spectrum_title(
+            key, info, band, remove_shaft_orders
+        ),
         fontsize=11, fontweight="bold",
     )
     ax.set_xlabel("주파수 (Hz)")

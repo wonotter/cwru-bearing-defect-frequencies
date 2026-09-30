@@ -160,7 +160,7 @@ DATASETS = {
         "fault_diameter_inch": None,
         "load_hp": 0,
         "rpm": 1797,
-        "description": "정상 베어링 (0HP, 1797 RPM) — 논문 Fig.7",
+        "description": "정상 베어링 (0HP, 1797 RPM)",
     },
     "IR007_0": {
         "file": os.path.join(DATA_DIR, "12k_drive_end_fault", "inch007_0HP", "105.mat"),
@@ -170,7 +170,7 @@ DATASETS = {
         "fault_diameter_inch": 0.007,
         "load_hp": 0,
         "rpm": 1797,
-        "description": "내륜 결함 0.007\" (0HP, 1797 RPM) — 논문 Fig.5",
+        "description": "내륜 결함 0.007\" (0HP, 1797 RPM)",
     },
     "B007_0": {
         "file": os.path.join(DATA_DIR, "12k_drive_end_fault", "inch007_0HP", "118.mat"),
@@ -180,7 +180,7 @@ DATASETS = {
         "fault_diameter_inch": 0.007,
         "load_hp": 0,
         "rpm": 1797,
-        "description": "볼 결함 0.007\" (0HP, 1797 RPM) — 논문 Fig.8",
+        "description": "볼 결함 0.007\" (0HP, 1797 RPM)",
     },
     "OR007@6_0": {
         "file": os.path.join(DATA_DIR, "12k_drive_end_fault", "inch007_0HP", "130.mat"),
@@ -191,7 +191,7 @@ DATASETS = {
         "load_hp": 0,
         "rpm": 1797,
         "or_position": "6:00 (하중대 중심)",
-        "description": "외륜 결함 0.007\" @6시 (0HP, 1797 RPM) — 논문 Fig.6",
+        "description": "외륜 결함 0.007\" @6시 (0HP, 1797 RPM)",
     },
 }
 
@@ -225,16 +225,20 @@ FIGURE_DPI = 150                # 저장 이미지 해상도
 #
 # 논문 Fig.6은 x축 0~1000 Hz 범위에 BPFO 고조파 9개를 표시한다.
 # 진폭 단위는 g이며, 제곱 엔벨로프가 아닌 일반 엔벨로프(|Hilbert|)를 사용한다.
-#
-# 밴드패스가 필요한 이유:
-#   전대역 힐베르트 엔벨로프는 1~3 kHz 구조 모드와 3~5 kHz 하우징 공진이
-#   한 임펄스에 겹친다. 엔벨로프 파형이 날카로워져 BPFO 5~7차가 1~4차보다
-#   커지는(다시 올라가는) 왜곡이 생긴다. 12 kHz 데이터(나이퀴스트 6 kHz)에서
-#   SKF 6205 하우징 공진만 남기면(약 3.2~4.5 kHz) 논문 Fig.6처럼 고조파가
-#   단조 감소한다. 기존 2~5 kHz는 하한이 너무 낮아 이 왜곡을 막지 못한다.
+# 밴드패스 구간은 파일마다 Kurtogram이 고른 칸(검은 테두리)을 쓴다.
 # ---------------------------------------------------------------------------
 PAPER_PLOT_FREQ_MAX = 1_000     # 논문 스타일 플롯 x축 최대 주파수 (Hz)
 PAPER_N_HARMONICS = 9           # 논문 스타일 플롯 고조파 표시 개수
-PAPER_BANDPASS_LOW = 3_200      # Hz, 하우징 공진 하한
-PAPER_BANDPASS_HIGH = 4_500     # Hz, 하우징 공진 상한
-PAPER_FILTER_ORDER = 8          # Butterworth 차수 (공진 분리용으로 다소 높임)
+PAPER_FILTER_ORDER = 8          # Kurtogram 구간에 적용할 Butterworth 차수
+
+# ---------------------------------------------------------------------------
+# Kurtogram
+#
+# 0 Hz ~ 샘플링/2 를 1칸, 2칸, 4칸, ... 으로 나누고
+# 각 칸의 충격 세기(스펙트럴 커토시스)를 색으로 그린다.
+# 엔벨로프에 쓸 구간은 "폭이 KURTOGRAM_MIN_BANDWIDTH 이상인 칸" 중에서
+# 점수가 가장 높은 칸으로 고른다. 너무 좁은 칸은 엔벨로프의
+# 높은 배수(수백 Hz)를 담지 못한다.
+# ---------------------------------------------------------------------------
+KURTOGRAM_NLEVEL = 5            # 0이면 통대역 1칸, 5이면 가장 좁은 칸까지
+KURTOGRAM_MIN_BANDWIDTH = 1_000 # Hz, 대역을 고를 때 이보다 좁은 칸은 제외

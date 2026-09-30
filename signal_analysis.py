@@ -17,9 +17,9 @@ from config import (
     ENVELOPE_BANDPASS_LOW,
     ENVELOPE_BANDPASS_HIGH,
     ENVELOPE_FILTER_ORDER,
+    KURTOGRAM_MIN_BANDWIDTH,
+    KURTOGRAM_NLEVEL,
     N_HARMONICS,
-    PAPER_BANDPASS_LOW,
-    PAPER_BANDPASS_HIGH,
     PAPER_FILTER_ORDER,
 )
 
@@ -284,25 +284,17 @@ def compute_envelope_spectrum(
 def compute_paper_envelope_spectrum(
     signal: np.ndarray,
     fs: float,
+    band: tuple[float, float] | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    논문 Fig.5~8 형식의 엔벨로프 스펙트럼을 계산한다.
+    논문 형식의 엔벨로프 스펙트럼을 계산한다.
 
     처리:
-        1. 하우징 공진 대역만 통과 (기본 3.2~4.5 kHz, Butterworth)
-        2. 힐베르트 변환 → 일반 엔벨로프 |analytic| (제곱하지 않음)
-        3. DC 제거 후 FFT → 진폭 스펙트럼 (단위 g)
-
-    전대역 엔벨로프를 쓰면 안 되는 이유:
-        1~3 kHz 구조 모드와 3~5 kHz 하우징 공진이 한 충격에 겹쳐
-        엔벨로프 펄스가 날카로워진다. 그 결과 BPFO 5~7차 진폭이
-        1~4차보다 커져 논문 Fig.6의 단조 감쇠와 달라진다.
-        12 kHz OR007@6_0에서 3.2~4.5 kHz만 남기면 1~7차가
-        약 0.53 / 0.26 / 0.14 / 0.08 / 0.02 / 0.01 / 0.01 g 로
-        논문 Fig.6(약 0.55 / 0.27 / 0.16 / 0.07 / 0.07 / 0.01 / 0.01)과
-        같은 감쇠 패턴이 된다.
-
-    나이퀴스트가 상한보다 낮으면(예: 잘못된 fs) 상한을 잘라 낸다.
+        1. Kurtogram에서 충격 점수가 가장 높은 칸을 고른다.
+           band를 넘기면 그 구간을 그대로 쓴다.
+        2. 그 구간만 Butterworth 밴드패스로 통과시킨다.
+        3. 힐베르트 변환 → 일반 엔벨로프 |analytic| (제곱하지 않음)
+        4. DC 제거 후 FFT → 진폭 스펙트럼 (단위 g)
 
     Parameters
     ----------
@@ -310,6 +302,8 @@ def compute_paper_envelope_spectrum(
         시간 영역 진동 신호 (1D)
     fs : float
         샘플링 레이트 (Hz)
+    band : tuple[float, float] | None
+        (하한, 상한) Hz. None이면 Kurtogram이 고른 칸을 사용한다.
 
     Returns
     -------
@@ -320,14 +314,183 @@ def compute_paper_envelope_spectrum(
     envelope : np.ndarray
         시간 영역 엔벨로프
     """
-    high = min(PAPER_BANDPASS_HIGH, fs / 2.0 * 0.95)
-    low = PAPER_BANDPASS_LOW
-    if low >= high:
-        low = high * 0.5
+    if band is None:
+        band = envelope_band_from_kurtogram(signal, fs)
+    low, high = _clip_bandpass_edges(band[0], band[1], fs)
     filtered = bandpass_filter(
         signal, fs, low, high, order=PAPER_FILTER_ORDER
     )
     return compute_envelope_spectrum(filtered, fs, band=None, squared=False)
+
+
+def envelope_band_from_kurtogram(
+    signal: np.ndarray,
+    fs: float,
+) -> tuple[float, float]:
+    """
+    Kurtogram 검은 테두리 칸의 하한과 상한(Hz)을 반환한다.
+
+    폭이 KURTOGRAM_MIN_BANDWIDTH 이상인 칸 중 충격 점수가 가장 큰 칸이다.
+    """
+    best = compute_kurtogram(signal, fs)["best"]
+    return float(best["low"]), float(best["high"])
+
+
+def _clip_bandpass_edges(
+    low: float,
+    high: float,
+    fs: float,
+) -> tuple[float, float]:
+    """밴드패스 차단 주파수를 (0, 나이퀴스트) 안으로 넣는다."""
+    nyquist = fs / 2.0
+    high = min(high, nyquist * 0.99)
+    low = max(low, 1.0)
+    if low >= high:
+        low = high * 0.5
+    return low, high
+
+
+# =========================================================================
+# Kurtogram
+# =========================================================================
+
+def compute_kurtogram(
+    signal: np.ndarray,
+    fs: float,
+    nlevel: int = KURTOGRAM_NLEVEL,
+    min_bandwidth: float = KURTOGRAM_MIN_BANDWIDTH,
+) -> dict:
+    """
+    주파수 구간별 충격 세기를 계산한다.
+
+    0 Hz부터 샘플링 레이트의 절반까지를 점점 잘게 나눈다.
+        단계 0: 구간 1개 (전체)
+        단계 1: 구간 2개
+        단계 2: 구간 4개
+        ...
+    각 구간만 남긴 뒤, 그 신호의 충격 점수(스펙트럴 커토시스)를 구한다.
+    점수가 클수록 그 주파수에서 베어링 충격이 더 뚜렷하다는 뜻이다.
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        시간 영역 진동 신호 (1D)
+    fs : float
+        샘플링 레이트 (Hz)
+    nlevel : int
+        가장 잘게 나눌 단계. 5이면 최대 32칸.
+    min_bandwidth : float
+        엔벨로프에 쓸 구간을 고를 때, 이 폭(Hz)보다 좁은 칸은 후보에서 뺀다.
+
+    Returns
+    -------
+    dict
+        {
+            "fs": 샘플링 레이트,
+            "rows": [단계별 칸 정보, ...],
+            "best": 폭 조건을 만족하는 칸 중 점수가 가장 높은 칸,
+        }
+        각 row: level, bandwidth, centers, kurtosis
+        best: level, center, bandwidth, low, high, kurtosis
+    """
+    signal = np.asarray(signal, dtype=np.float64)
+    signal = signal - np.mean(signal)
+    nyquist = fs / 2.0
+
+    rows = []
+    for level in range(nlevel + 1):
+        n_bands = 2 ** level
+        bandwidth = nyquist / n_bands
+        centers = np.empty(n_bands)
+        scores = np.empty(n_bands)
+
+        for index in range(n_bands):
+            low = index * bandwidth
+            high = (index + 1) * bandwidth
+            centers[index] = 0.5 * (low + high)
+            kept = _keep_frequency_band(signal, fs, low, high)
+            scores[index] = _spectral_kurtosis(kept)
+
+        rows.append({
+            "level": level,
+            "bandwidth": float(bandwidth),
+            "centers": centers,
+            "kurtosis": scores,
+        })
+
+    best = _select_kurtogram_band(rows, min_bandwidth)
+    return {"fs": float(fs), "rows": rows, "best": best}
+
+
+def _spectral_kurtosis(signal: np.ndarray) -> float:
+    """
+    한 구간에 충격이 얼마나 모여 있는지 점수로 나타낸다.
+
+    힐베르트 변환으로 진동의 크기 변화를 구한 뒤,
+    그 크기가 가끔 크게 튀면 점수가 커진다.
+    크기 변화가 잔잔한 잡음이면 점수는 0 근처에 머문다.
+    """
+    amplitude = np.abs(hilbert(signal))
+    power = amplitude ** 2
+    mean_power = float(np.mean(power))
+    if mean_power <= 0.0:
+        return 0.0
+    return float(np.mean(power ** 2) / (mean_power ** 2) - 2.0)
+
+
+def _keep_frequency_band(
+    signal: np.ndarray,
+    fs: float,
+    low: float,
+    high: float,
+) -> np.ndarray:
+    """
+    low~high(Hz)만 남긴다.
+
+    맨 위 칸을 고역 통과로 처리하면 나이퀴스트 직전까지 전부 열려
+    점수가 비정상적으로 커진다. 모든 칸을 같은 방식의 대역 제한으로 자른다.
+    """
+    nyquist = fs / 2.0
+    if low <= 0.0 and high >= nyquist * 0.999:
+        return signal
+
+    # butter() 차단 비율은 0과 1 사이여야 한다.
+    low_ratio = max(low / nyquist, 1e-4)
+    high_ratio = min(high / nyquist, 0.999)
+    if high_ratio - low_ratio < 0.01:
+        return np.zeros_like(signal)
+
+    if low <= 0.0:
+        sos = butter(3, high_ratio, btype="low", output="sos")
+    else:
+        sos = butter(3, [low_ratio, high_ratio], btype="band", output="sos")
+    return sosfiltfilt(sos, signal)
+
+
+def _select_kurtogram_band(rows: list[dict], min_bandwidth: float) -> dict:
+    """폭이 충분한 칸 중에서 충격 점수가 가장 큰 칸을 고른다."""
+    candidates = []
+    for row in rows:
+        if row["bandwidth"] < min_bandwidth:
+            continue
+        index = int(np.argmax(row["kurtosis"]))
+        center = float(row["centers"][index])
+        bandwidth = float(row["bandwidth"])
+        candidates.append({
+            "level": int(row["level"]),
+            "center": center,
+            "bandwidth": bandwidth,
+            "low": center - bandwidth / 2.0,
+            "high": center + bandwidth / 2.0,
+            "kurtosis": float(row["kurtosis"][index]),
+        })
+
+    if not candidates:
+        raise ValueError(
+            "Kurtogram에서 고를 수 있는 구간이 없습니다. "
+            "min_bandwidth를 낮추거나 nlevel을 확인하세요."
+        )
+    return max(candidates, key=lambda item: item["kurtosis"])
 
 
 # =========================================================================
