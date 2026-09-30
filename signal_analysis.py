@@ -427,8 +427,8 @@ def _spectral_kurtosis(signal: np.ndarray) -> float:
     한 구간에 충격이 얼마나 모여 있는지 점수로 나타낸다.
 
     힐베르트 변환으로 진동의 크기 변화를 구한 뒤,
-    그 크기가 가끔 크게 튀면 점수가 커진다.
-    크기 변화가 잔잔한 잡음이면 점수는 0 근처에 머문다.
+    그 크기가 크게 증가하면 점수가 커진다.
+    크기 변화가 적으면 점수는 0 근처에 머문다.
     """
     amplitude = np.abs(hilbert(signal))
     power = amplitude ** 2
