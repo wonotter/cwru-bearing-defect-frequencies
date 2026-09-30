@@ -361,7 +361,11 @@ def _english_fault_label(info: dict) -> str:
     return f"{label} ({info['load_hp']} HP, {info['rpm']} RPM)"
 
 
-def plot_kurtogram(data: dict, save: bool = True) -> plt.Figure:
+def plot_kurtogram(
+    data: dict,
+    save: bool = True,
+    result: dict | None = None,
+) -> plt.Figure:
     """
     한 데이터셋의 Kurtogram을 그린다.
 
@@ -375,12 +379,15 @@ def plot_kurtogram(data: dict, save: bool = True) -> plt.Figure:
         data_loader.load_mat_file()의 반환값
     save : bool
         True이면 results/ 디렉토리에 이미지 저장
+    result : dict | None
+        미리 계산한 compute_kurtogram 결과. None이면 여기서 계산한다.
 
     Returns
     -------
     matplotlib.figure.Figure
     """
-    result = compute_kurtogram(data["signal"], data["fs"])
+    if result is None:
+        result = compute_kurtogram(data["signal"], data["fs"])
     rows = result["rows"]
     best = result["best"]
     nyquist = data["fs"] / 2.0
@@ -992,6 +999,7 @@ def plot_paper_envelope_spectrum(
     remove_shaft_orders: bool = False,
     refine_markers: bool = True,
     save: bool = True,
+    band: tuple[float, float] | None = None,
 ) -> plt.Figure:
     """
     논문 Fig.5~8 형식의 엔벨로프 스펙트럼 단일 플롯을 생성한다.
@@ -1020,6 +1028,8 @@ def plot_paper_envelope_spectrum(
         (스냅할 실제 피크가 없으므로) 적용하지 않는다.
     save : bool
         True이면 results/ 디렉토리에 이미지 저장
+    band : tuple[float, float] | None
+        미리 계산한 Kurtogram 선택 대역. None이면 여기서 계산한다.
 
     Returns
     -------
@@ -1043,7 +1053,9 @@ def plot_paper_envelope_spectrum(
         )
         band = None
     else:
-        low, high = envelope_band_from_kurtogram(signal, fs)
+        if band is None:
+            band = envelope_band_from_kurtogram(signal, fs)
+        low, high = band
         env_freqs, env_mag, _ = compute_paper_envelope_spectrum(
             signal, fs, band=(low, high)
         )

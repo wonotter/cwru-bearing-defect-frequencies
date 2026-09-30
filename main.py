@@ -7,13 +7,16 @@ BPFO/BPFI/BSF/FTF가 실제로 관측되는지 검증한다.
 
 실행 방법:
     python main.py
+    python main.py --base-kurtogram-envelope  # 48 kHz / 1 HP 결과만 생성
 """
+
+import argparse
 
 import matplotlib.pyplot as plt
 
 from config import BASE_KEYS, PAPER_KEYS
 from data_loader import load_all_datasets, print_dataset_summary
-from signal_analysis import print_defect_frequencies
+from signal_analysis import compute_kurtogram, print_defect_frequencies
 from visualization import (
     plot_analysis,
     plot_comparison,
@@ -86,6 +89,27 @@ def run_kurtograms():
         plt.close("all")
 
 
+def run_base_kurtogram_envelopes(all_data: dict | None = None) -> None:
+    """48 kHz / 1 HP 그룹의 Kurtogram과 선택 대역 엔벨로프를 저장한다."""
+    if all_data is None:
+        all_data = load_all_datasets(BASE_KEYS)
+
+    print("\n" + "=" * 60)
+    print("  48 kHz / 1 HP / 0.021\" Kurtogram + 엔벨로프 분석")
+    print("  정상 기준: Normal_1 (48 kHz / 1 HP)")
+    print("=" * 60)
+
+    for key in BASE_KEYS:
+        data = all_data[key]
+        print(f"\n  처리 중: {key}")
+        result = compute_kurtogram(data["signal"], data["fs"])
+        best = result["best"]
+        band = (best["low"], best["high"])
+        plot_kurtogram(data, result=result, save=True)
+        plot_paper_envelope_spectrum(data, band=band, save=True)
+        plt.close("all")
+
+
 def run_shaft_removal_comparison(all_data: dict):
     """
     48kHz / 0.021" 데이터에 축 동기 성분 제거를 적용한 결과를 생성한다.
@@ -102,9 +126,6 @@ def run_shaft_removal_comparison(all_data: dict):
         data = all_data[key]
         freq_name = "BPFO" if data["info"]["fault_type"] == "Outer Race" else "BPFI"
         print(f"\n  처리 중: {key} ({freq_name})")
-        plot_paper_envelope_spectrum(
-            data, freq_names=[freq_name], remove_shaft_orders=False, save=True
-        )
         plot_paper_envelope_spectrum(
             data, freq_names=[freq_name], remove_shaft_orders=True, save=True
         )
@@ -243,6 +264,7 @@ def main():
     # ==================================================================
     # 논문 Fig.5~8 재현 + 축 동기 성분 제거 비교
     # ==================================================================
+    run_base_kurtogram_envelopes(all_data)
     run_paper_reproduction()
     run_kurtograms()
     run_shaft_removal_comparison(all_data)
@@ -256,9 +278,11 @@ def main():
     n_baseline = len(all_data) + len(fault_keys) + 1
     n_paper = len(PAPER_FIGURES)
     n_kurtogram = len(PAPER_KEYS)
-    n_shaft_removal = 4  # OR021@6_1 / IR021_1 × (제거 전, 제거 후)
+    n_base_kurtogram_envelope = 2 * len(BASE_KEYS)
+    n_shaft_removal = 2  # OR021@6_1 / IR021_1 제거 후
     n_total = (n_baseline + n_m1 + n_m2 + n_m1_vs_m2
-               + n_paper + n_kurtogram + n_shaft_removal)
+               + n_paper + n_kurtogram + n_base_kurtogram_envelope
+               + n_shaft_removal)
 
     print("\n" + "=" * 60)
     print("  분석 완료!")
@@ -274,6 +298,8 @@ def main():
     print("\n  === 논문 Fig.5~8 재현 (12kHz, 0.007\", 0HP) ===")
     print(f"    - 논문 대응 그림        : {n_paper}개")
     print(f"    - Kurtogram             : {n_kurtogram}개")
+    print("\n  === 48kHz, 0.021\", 1HP (정상 기준 포함) ===")
+    print(f"    - Kurtogram + 엔벨로프 : {n_base_kurtogram_envelope}개")
     print(f"    - 축 동기 성분 제거 비교: {n_shaft_removal}개")
     print(f"\n  총 이미지 파일            : {n_total}개")
     print("\n  결과 저장 위치: results/")
@@ -281,4 +307,13 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="CWRU 베어링 결함 주파수 분석")
+    parser.add_argument(
+        "--base-kurtogram-envelope", action="store_true",
+        help="48 kHz / 1 HP / 0.021 inch 그룹의 Kurtogram과 엔벨로프만 생성",
+    )
+    args = parser.parse_args()
+    if args.base_kurtogram_envelope:
+        run_base_kurtogram_envelopes()
+    else:
+        main()
