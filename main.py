@@ -8,14 +8,17 @@ BPFO/BPFI/BSF/FTF가 실제로 관측되는지 검증한다.
 실행 방법:
     python main.py
     python main.py --base-kurtogram-envelope  # 48 kHz / 1 HP 결과만 생성
+    python main.py --ball-segments           # 227DE의 구간별 엔벨로프
 """
 
 import argparse
+from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 
-from config import BASE_KEYS, PAPER_KEYS
-from data_loader import load_all_datasets, print_dataset_summary
+from config import BASE_KEYS, PAPER_KEYS, RESULTS_DIR, FIGURE_DPI
+from data_loader import load_all_datasets, load_mat_file, print_dataset_summary
 from signal_analysis import compute_kurtogram, print_defect_frequencies
 from visualization import (
     plot_analysis,
@@ -108,6 +111,73 @@ def run_base_kurtogram_envelopes(all_data: dict | None = None) -> None:
         plot_kurtogram(data, result=result, save=True)
         plot_paper_envelope_spectrum(data, band=band, save=True)
         plt.close("all")
+
+
+def run_ball_segments(segment_seconds: float = 1.0) -> list[Path]:
+    """227DE를 잘라 기존 양식의 엔벨로프 그래프를 구간마다 저장한다.
+
+    기존 분석 그대로: Kurtogram 대역 -> 밴드패스 -> 일반 엔벨로프 -> FFT.
+    시간에 따른 차이만 비교하도록 전체 기록에서 고른 대역을 모두 사용한다.
+    BSF 점선도 이론 위치에 고정한다(피크에 따라 점선을 이동하지 않는다).
+    """
+    data = load_mat_file("B021_1")
+    fs, signal = data["fs"], data["signal"]
+    if not np.isfinite(segment_seconds) or segment_seconds <= 0:
+        raise ValueError("구간 길이는 0보다 큰 초 단위 숫자여야 합니다.")
+    window = round(segment_seconds * fs)
+    if window < 128 or window > len(signal):
+        raise ValueError("구간은 128개 이상의 샘플을 포함하고 전체 기록보다 길지 않아야 합니다.")
+
+    # 기본은 0~1초, 1~2초, ... . 남은 끝부분은 마지막 1초 구간으로 포함한다.
+    starts = list(range(0, len(signal) - window + 1, window))
+    if starts[-1] + window < len(signal):
+        starts.append(len(signal) - window)
+    intervals = [(0, len(signal)), *[(start, start + window) for start in starts]]
+
+    best = compute_kurtogram(signal, fs)["best"]
+    band = (best["low"], best["high"])
+    # 구간 길이를 바꿔 실행한 결과가 섞이지 않도록 길이별 폴더에 저장한다.
+    output = Path(RESULTS_DIR) / "ball_segments" / f"{segment_seconds:g}s"
+    output.mkdir(parents=True, exist_ok=True)
+    figures = []
+    for index, (start, stop) in enumerate(intervals):
+        part = {
+            **data,
+            "signal": signal[start:stop],
+            "n_samples": stop - start,
+            "duration_s": (stop - start) / fs,
+            # 제목과 결함 주파수 계산에 같은 파일 기록 RPM을 사용한다.
+            "info": {**data["info"], "rpm": data["rpm"]},
+        }
+        fig = plot_paper_envelope_spectrum(
+            part, freq_names=["BSF"], band=band,
+            refine_markers=False, save=False,
+        )
+        ax = fig.axes[0]
+        label = "Full record" if index == 0 else "Segment"
+        ax.set_title(
+            ax.get_title() + f"\n{label}: {start/fs:.3f} ~ {stop/fs:.3f} s",
+            fontsize=11, fontweight="bold",
+        )
+        filename = ("00_full" if index == 0 else f"{index:02d}_segment")
+        filename += f"_{start/fs:.3f}-{stop/fs:.3f}s.png"
+        figures.append((fig, output / filename))
+        plt.close(fig)
+
+    # 자동 확대 때문에 약한 구간이 강해 보이지 않도록 동일한 y축을 쓴다.
+    common_max = max(fig.axes[0].get_ylim()[1] for fig, _ in figures)
+    for fig, path in figures:
+        fig.axes[0].set_ylim(0, common_max)
+        fig.tight_layout()
+        fig.savefig(path, dpi=FIGURE_DPI, bbox_inches="tight")
+        print(f"  [저장] {path}")
+
+    print(f"\n227DE: {len(signal)/fs:.5f}초, 파일 기록 {data['rpm']:g} RPM")
+    print(f"전체 1장 + 구간별 {len(starts)}장, 공통 대역 {band[0]:g}~{band[1]:g} Hz")
+    if len(starts) > 1 and starts[-1] < starts[-2] + window:
+        print("마지막 그림은 기록 끝을 포함하도록 앞 구간과 일부 겹칩니다.")
+    print("초록색 BSF 점선과 그 배수 근처에 파란 피크가 나타나는지 비교하세요.")
+    return [path for _, path in figures]
 
 
 def run_shaft_removal_comparison(all_data: dict):
@@ -308,12 +378,26 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CWRU 베어링 결함 주파수 분석")
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--base-kurtogram-envelope", action="store_true",
         help="48 kHz / 1 HP / 0.021 inch 그룹의 Kurtogram과 엔벨로프만 생성",
     )
+    mode.add_argument(
+        "--ball-segments", action="store_true",
+        help="227DE를 시간 구간별로 잘라 기존 양식의 엔벨로프 그래프 생성",
+    )
+    parser.add_argument(
+        "--segment-seconds", type=float, default=1.0,
+        help="--ball-segments에서 사용할 구간 길이(초), 기본 1초",
+    )
     args = parser.parse_args()
-    if args.base_kurtogram_envelope:
+    if args.ball_segments:
+        try:
+            run_ball_segments(args.segment_seconds)
+        except ValueError as error:
+            parser.error(str(error))
+    elif args.base_kurtogram_envelope:
         run_base_kurtogram_envelopes()
     else:
         main()
