@@ -1,0 +1,109 @@
+{
+  "experiment": "12 kHz / three known fault types / no training",
+  "segment_seconds": 1.0,
+  "overlap_seconds": 0,
+  "rule": {
+    "band_low_hz": 2000,
+    "band_high_hz": 5000,
+    "n_harmonics": 3,
+    "relative_tolerance": 0.02,
+    "tolerance_bins": 2.0,
+    "noise_low_hz": 20.0,
+    "noise_high_hz": 1000.0
+  },
+  "filter_order": 8,
+  "score_definition": "mean(peak amplitude / common background) for harmonics 1..3",
+  "prediction_rule": "argmax of BPFO, BPFI, BSF(2x) scores",
+  "ball_frequency_convention": "config BSF = 4.7135 * RPM/60 = paper 2*BSF",
+  "roc_definition": "binary one-vs-rest per class, using raw continuous scores",
+  "evaluation_scope": "All complete windows; descriptive evaluation of these recordings. Windows from the same recording are not independent test recordings.",
+  "records": [
+    {
+      "dataset": "OR007@6_0",
+      "file_id": 130,
+      "source_file": "12k_drive_end_fault\\inch007_0HP\\130.mat",
+      "true_label": "Outer Race",
+      "fs_hz": 12000,
+      "rpm": 1796.0,
+      "rpm_source": "file",
+      "duration_seconds": 10.165916666666666,
+      "n_segments": 10,
+      "unused_tail_seconds": 0.16591666666666666
+    },
+    {
+      "dataset": "IR007_0",
+      "file_id": 105,
+      "source_file": "12k_drive_end_fault\\inch007_0HP\\105.mat",
+      "true_label": "Inner Race",
+      "fs_hz": 12000,
+      "rpm": 1797.0,
+      "rpm_source": "file",
+      "duration_seconds": 10.105416666666667,
+      "n_segments": 10,
+      "unused_tail_seconds": 0.10541666666666667
+    },
+    {
+      "dataset": "B007_0",
+      "file_id": 118,
+      "source_file": "12k_drive_end_fault\\inch007_0HP\\118.mat",
+      "true_label": "Ball",
+      "fs_hz": 12000,
+      "rpm": 1796.0,
+      "rpm_source": "file",
+      "duration_seconds": 10.21425,
+      "n_segments": 10,
+      "unused_tail_seconds": 0.21425
+    }
+  ],
+  "metrics": {
+    "n_segments": 30,
+    "class_order": [
+      "Outer Race",
+      "Inner Race",
+      "Ball"
+    ],
+    "accuracy": 0.6666666666666666,
+    "macro_f1": 0.5473453749315819,
+    "macro_auc_ovr": 0.6766666666666666,
+    "per_class": {
+      "Outer Race": {
+        "precision": 0.5263157894736842,
+        "recall": 1.0,
+        "f1": 0.6896551724137931,
+        "support": 10,
+        "auc_ovr": 1.0
+      },
+      "Inner Race": {
+        "precision": 0.9090909090909091,
+        "recall": 1.0,
+        "f1": 0.9523809523809523,
+        "support": 10,
+        "auc_ovr": 1.0
+      },
+      "Ball": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 10,
+        "auc_ovr": 0.030000000000000006
+      }
+    },
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        0
+      ],
+      [
+        0,
+        10,
+        0
+      ],
+      [
+        9,
+        1,
+        0
+      ]
+    ]
+  }
+}

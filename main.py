@@ -387,12 +387,27 @@ if __name__ == "__main__":
         "--ball-segments", action="store_true",
         help="227DE를 시간 구간별로 잘라 기존 양식의 엔벨로프 그래프 생성",
     )
+    mode.add_argument(
+        "--rule-classification", action="store_true",
+        help="12 kHz 외륜/내륜과 0 HP 정상 데이터를 분류하고 F1/ROC/혼동 행렬 생성",
+    )
     parser.add_argument(
         "--segment-seconds", type=float, default=1.0,
-        help="--ball-segments에서 사용할 구간 길이(초), 기본 1초",
+        help="구간 분석 또는 규칙 분류에서 사용할 구간 길이(초), 기본 1초",
+    )
+    parser.add_argument(
+        "--normal-threshold", type=float, default=10.0,
+        help="규칙 분류에서 두 결함 점수가 모두 이 값 미만이면 정상 판정, 기본 10",
     )
     args = parser.parse_args()
-    if args.ball_segments:
+    if args.rule_classification:
+        from rule_classifier import FrequencyRule, run_rule_classification
+        try:
+            run_rule_classification(args.segment_seconds,
+                                    FrequencyRule(normal_threshold=args.normal_threshold))
+        except ValueError as error:
+            parser.error(str(error))
+    elif args.ball_segments:
         try:
             run_ball_segments(args.segment_seconds)
         except ValueError as error:

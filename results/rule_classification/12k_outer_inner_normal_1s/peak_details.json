@@ -1,0 +1,1452 @@
+[
+  {
+    "dataset": "OR007@6_0",
+    "segment": 1,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.5494996990657889,
+          "peak_to_background": 119.65116226273534
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.3371468042656195,
+          "peak_to_background": 73.41224581584092
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.1974630595844215,
+          "peak_to_background": 42.99671978601591
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 161.0,
+          "peak_amplitude": 0.012225795590148672,
+          "peak_to_background": 2.6621136543566615
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.1974630595844215,
+          "peak_to_background": 42.99671978601591
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 478.0,
+          "peak_amplitude": 0.018894819728260726,
+          "peak_to_background": 4.114264566613683
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 2,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.5138535490917797,
+          "peak_to_background": 123.33813660095153
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.3311483093241032,
+          "peak_to_background": 79.48415552014677
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.1855650628868795,
+          "peak_to_background": 44.54041256532841
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 165.0,
+          "peak_amplitude": 0.015488703874177619,
+          "peak_to_background": 3.717689364180684
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.1855650628868795,
+          "peak_to_background": 44.54041256532841
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 490.0,
+          "peak_amplitude": 0.01949450811261386,
+          "peak_to_background": 4.679185944733977
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 3,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.5386014648894821,
+          "peak_to_background": 127.43832935136079
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.340647088867184,
+          "peak_to_background": 80.60040444291448
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.19807354020427662,
+          "peak_to_background": 46.86612030942425
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 165.0,
+          "peak_amplitude": 0.01583507372131779,
+          "peak_to_background": 3.7467319934127095
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.19807354020427662,
+          "peak_to_background": 46.86612030942425
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 478.0,
+          "peak_amplitude": 0.022793642651462664,
+          "peak_to_background": 5.393196878754068
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 4,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.5632000180826309,
+          "peak_to_background": 128.13471838348184
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.34817608375439496,
+          "peak_to_background": 79.21420988517697
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.20894391052514885,
+          "peak_to_background": 47.537230599227954
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 165.0,
+          "peak_amplitude": 0.009882759536754444,
+          "peak_to_background": 2.248445613344972
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.20894391052514885,
+          "peak_to_background": 47.537230599227954
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 478.0,
+          "peak_amplitude": 0.017807577930029628,
+          "peak_to_background": 4.051436274672632
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 5,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.5317910405797504,
+          "peak_to_background": 120.56295573291764
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.33713158463103415,
+          "peak_to_background": 76.43148758152932
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.1998740002876524,
+          "peak_to_background": 45.313663469340874
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.005787919919720791,
+          "peak_to_background": 1.3121859524113637
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.1998740002876524,
+          "peak_to_background": 45.313663469340874
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 491.0,
+          "peak_amplitude": 0.015099210024253648,
+          "peak_to_background": 3.423159193828352
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 6,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.5191896965247064,
+          "peak_to_background": 108.44306097398751
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.33432682583317996,
+          "peak_to_background": 69.83078555246709
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.19538791032228953,
+          "peak_to_background": 40.810638605675344
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 161.0,
+          "peak_amplitude": 0.006430654096991426,
+          "peak_to_background": 1.3431695948717253
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.19538791032228953,
+          "peak_to_background": 40.810638605675344
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 491.0,
+          "peak_amplitude": 0.016793124973298178,
+          "peak_to_background": 3.5075770717582166
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 7,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.5507087180851754,
+          "peak_to_background": 114.32948070027791
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.3366320583914912,
+          "peak_to_background": 69.88625231281017
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.20264625977211195,
+          "peak_to_background": 42.070228570479664
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 165.0,
+          "peak_amplitude": 0.005551522838697875,
+          "peak_to_background": 1.1525198392553764
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.20264625977211195,
+          "peak_to_background": 42.070228570479664
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 490.0,
+          "peak_amplitude": 0.01699149971316629,
+          "peak_to_background": 3.5275078725460927
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 8,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.5712420313237009,
+          "peak_to_background": 127.53321574724221
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.3416935549471267,
+          "peak_to_background": 76.28513917565793
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.20925425991498287,
+          "peak_to_background": 46.71727081063575
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 165.0,
+          "peak_amplitude": 0.011239982330453474,
+          "peak_to_background": 2.5093935896545054
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.20925425991498287,
+          "peak_to_background": 46.71727081063575
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 490.0,
+          "peak_amplitude": 0.013921066154395034,
+          "peak_to_background": 3.107961662390426
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 9,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.525959848009876,
+          "peak_to_background": 115.47749339267698
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.3319310782590071,
+          "peak_to_background": 72.87736704905066
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.19752550190768356,
+          "peak_to_background": 43.367853891769755
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.016259862220982312,
+          "peak_to_background": 3.5699457654304934
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.19752550190768356,
+          "peak_to_background": 43.367853891769755
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 491.0,
+          "peak_amplitude": 0.012758367777490986,
+          "peak_to_background": 2.8011726300044364
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "OR007@6_0",
+    "segment": 10,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.529140990366413,
+          "peak_to_background": 115.29201197501457
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.3362379589343586,
+          "peak_to_background": 73.26128856709936
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.1966347658386138,
+          "peak_to_background": 42.84381325678647
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.014587044079572948,
+          "peak_to_background": 3.17830160830598
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.1966347658386138,
+          "peak_to_background": 42.84381325678647
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 490.0,
+          "peak_amplitude": 0.01685936584675229,
+          "peak_to_background": 3.6734069831727316
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 1,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 107.0,
+          "peak_amplitude": 0.0055833837079043,
+          "peak_to_background": 2.1047149121908295
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 218.0,
+          "peak_amplitude": 0.007870008748241597,
+          "peak_to_background": 2.9666821479682337
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05321844903633205,
+          "peak_to_background": 20.061251232270777
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.1548191812637321,
+          "peak_to_background": 58.36071037669351
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05321844903633205,
+          "peak_to_background": 20.061251232270777
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.0537946121422458,
+          "peak_to_background": 20.278441943909336
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 2,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 106.0,
+          "peak_amplitude": 0.00511034495610435,
+          "peak_to_background": 2.124362668055986
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 219.0,
+          "peak_amplitude": 0.00751843509872823,
+          "peak_to_background": 3.1254020977314894
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.054462123377532236,
+          "peak_to_background": 22.639822305554397
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.15157508008998688,
+          "peak_to_background": 63.00953151237512
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.054462123377532236,
+          "peak_to_background": 22.639822305554397
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.052352138074856856,
+          "peak_to_background": 21.762704606915253
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 3,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 107.0,
+          "peak_amplitude": 0.005292386698188247,
+          "peak_to_background": 2.0637536264688543
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 219.0,
+          "peak_amplitude": 0.0068843993502613965,
+          "peak_to_background": 2.6845551799957343
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.0490420695400334,
+          "peak_to_background": 19.123838569360274
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.15661055509801047,
+          "peak_to_background": 61.06991409706759
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.0490420695400334,
+          "peak_to_background": 19.123838569360274
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.054568549673239194,
+          "peak_to_background": 21.278876374971855
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 4,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 109.0,
+          "peak_amplitude": 0.007386780665591238,
+          "peak_to_background": 2.8558604373291034
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 219.0,
+          "peak_amplitude": 0.008015842322386679,
+          "peak_to_background": 3.099066832592906
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05237433001825593,
+          "peak_to_background": 20.248845038474318
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.15836497075229566,
+          "peak_to_background": 61.226706884231305
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05237433001825593,
+          "peak_to_background": 20.248845038474318
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.05439367907059196,
+          "peak_to_background": 21.02956120276873
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 5,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.007657026046345152,
+          "peak_to_background": 2.9748368143593686
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 219.0,
+          "peak_amplitude": 0.00549104470195124,
+          "peak_to_background": 2.1333298110504026
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05299547905897215,
+          "peak_to_background": 20.58931250135843
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.15676102180140664,
+          "peak_to_background": 60.90333974167536
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05299547905897215,
+          "peak_to_background": 20.58931250135843
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.05291448860318383,
+          "peak_to_background": 20.557846839881957
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 6,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 107.0,
+          "peak_amplitude": 0.00476724121734425,
+          "peak_to_background": 1.7104244429328155
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 215.0,
+          "peak_amplitude": 0.007197709799069939,
+          "peak_to_background": 2.5824451107436506
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.0553587229705267,
+          "peak_to_background": 19.861993253843295
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.15941805982321786,
+          "peak_to_background": 57.197136401345965
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.0553587229705267,
+          "peak_to_background": 19.861993253843295
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.05355221358303705,
+          "peak_to_background": 19.21384106856931
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 7,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 109.0,
+          "peak_amplitude": 0.005773994446098829,
+          "peak_to_background": 2.2708809868913193
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 219.0,
+          "peak_amplitude": 0.006952062483530759,
+          "peak_to_background": 2.734208815215793
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05359811887394963,
+          "peak_to_background": 21.07985212320893
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.15655652594033534,
+          "peak_to_background": 61.57284033618552
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05359811887394963,
+          "peak_to_background": 21.07985212320893
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.0564914054963996,
+          "peak_to_background": 22.21776620364035
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 8,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.006242648789524858,
+          "peak_to_background": 2.3188079610018106
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 211.0,
+          "peak_amplitude": 0.005045232728212457,
+          "peak_to_background": 1.874032355450892
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.050914146624718104,
+          "peak_to_background": 18.911864578881048
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.15830087456975153,
+          "peak_to_background": 58.80025299546403
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.050914146624718104,
+          "peak_to_background": 18.911864578881048
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.05536936142922148,
+          "peak_to_background": 20.566737038467522
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 9,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.007256225864044435,
+          "peak_to_background": 2.749412871821158
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 217.0,
+          "peak_amplitude": 0.004444640439199291,
+          "peak_to_background": 1.684091959527315
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05180896902870236,
+          "peak_to_background": 19.63062465146354
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.15725450548312592,
+          "peak_to_background": 59.5843582639243
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05180896902870236,
+          "peak_to_background": 19.63062465146354
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.05082328637970686,
+          "peak_to_background": 19.257145571090962
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "IR007_0",
+    "segment": 10,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.36475999999999,
+          "tolerance_hz": 2.1472952,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.0035807727548131506,
+          "peak_to_background": 1.333174091880264
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.72951999999998,
+          "tolerance_hz": 4.2945904,
+          "peak_hz": 216.0,
+          "peak_amplitude": 0.007355828369613576,
+          "peak_to_background": 2.7386825353563613
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 322.09427999999997,
+          "tolerance_hz": 6.441885599999999,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05332119111201255,
+          "peak_to_background": 19.85225966746407
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.18523999999996,
+          "tolerance_hz": 3.2437047999999993,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.1588313448957432,
+          "peak_to_background": 59.13523378686252
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.37047999999993,
+          "tolerance_hz": 6.4874095999999986,
+          "peak_hz": 323.0,
+          "peak_amplitude": 0.05332119111201255,
+          "peak_to_background": 19.85225966746407
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.5557199999999,
+          "tolerance_hz": 9.731114399999997,
+          "peak_hz": 485.0,
+          "peak_amplitude": 0.0548925160453811,
+          "peak_to_background": 20.437286932396372
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "Normal_0",
+    "segment": 1,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.001744167818253009,
+          "peak_to_background": 3.117122145968629
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 216.0,
+          "peak_amplitude": 0.000590140511330868,
+          "peak_to_background": 1.054680655067479
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 324.0,
+          "peak_amplitude": 0.0015103526171625892,
+          "peak_to_background": 2.699254935167167
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 160.0,
+          "peak_amplitude": 0.0010380527229398864,
+          "peak_to_background": 1.8551753435056106
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 324.0,
+          "peak_amplitude": 0.0015103526171625892,
+          "peak_to_background": 2.699254935167167
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 479.0,
+          "peak_amplitude": 0.0017194709327218072,
+          "peak_to_background": 3.0729846449666502
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "Normal_0",
+    "segment": 2,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 109.0,
+          "peak_amplitude": 0.0013735960730071235,
+          "peak_to_background": 2.4551459459742513
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 217.0,
+          "peak_amplitude": 0.0011209460244585637,
+          "peak_to_background": 2.0035628680711324
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 322.0,
+          "peak_amplitude": 0.000890347696267184,
+          "peak_to_background": 1.5913947192731634
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 162.0,
+          "peak_amplitude": 0.0016068240727176346,
+          "peak_to_background": 2.8720143319790035
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 329.0,
+          "peak_amplitude": 0.001040151867067513,
+          "peak_to_background": 1.8591525484181473
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 479.0,
+          "peak_amplitude": 0.001679747792542934,
+          "peak_to_background": 3.0023571442604107
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "Normal_0",
+    "segment": 3,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 109.0,
+          "peak_amplitude": 0.0014442856319338796,
+          "peak_to_background": 2.628289574216912
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 214.0,
+          "peak_amplitude": 0.0009138050475717786,
+          "peak_to_background": 1.6629288738293344
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 326.0,
+          "peak_amplitude": 0.0012466178545956555,
+          "peak_to_background": 2.2685766844327473
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 160.0,
+          "peak_amplitude": 0.0012244241710272954,
+          "peak_to_background": 2.228188948207687
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 326.0,
+          "peak_amplitude": 0.0012466178545956555,
+          "peak_to_background": 2.2685766844327473
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 479.0,
+          "peak_amplitude": 0.0022173216159976,
+          "peak_to_background": 4.035048993881486
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "Normal_0",
+    "segment": 4,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 108.0,
+          "peak_amplitude": 0.0017012932724618382,
+          "peak_to_background": 2.917012740465879
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 211.0,
+          "peak_amplitude": 0.001033744307769101,
+          "peak_to_background": 1.7724429790891258
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 324.0,
+          "peak_amplitude": 0.0011998289066426564,
+          "peak_to_background": 2.0572092206015475
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 160.0,
+          "peak_amplitude": 0.0015399440015074933,
+          "peak_to_background": 2.6403656234419897
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 324.0,
+          "peak_amplitude": 0.0011998289066426564,
+          "peak_to_background": 2.0572092206015475
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 479.0,
+          "peak_amplitude": 0.002093079772299941,
+          "peak_to_background": 3.588764183952477
+        }
+      ]
+    }
+  },
+  {
+    "dataset": "Normal_0",
+    "segment": 5,
+    "peaks": {
+      "BPFO": [
+        {
+          "harmonic": 1,
+          "target_hz": 107.30501333333333,
+          "tolerance_hz": 2.1461002666666666,
+          "peak_hz": 106.0,
+          "peak_amplitude": 0.0014651269935173367,
+          "peak_to_background": 2.6285885860653218
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 214.61002666666667,
+          "tolerance_hz": 4.292200533333333,
+          "peak_hz": 217.0,
+          "peak_amplitude": 0.0011313965092946683,
+          "peak_to_background": 2.0298417569295313
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 321.91504,
+          "tolerance_hz": 6.4383007999999995,
+          "peak_hz": 318.0,
+          "peak_amplitude": 0.0012895726009166401,
+          "peak_to_background": 2.3136259414170297
+        }
+      ],
+      "BPFI": [
+        {
+          "harmonic": 1,
+          "target_hz": 162.09498666666664,
+          "tolerance_hz": 3.241899733333333,
+          "peak_hz": 160.0,
+          "peak_amplitude": 0.0015720206970336436,
+          "peak_to_background": 2.820366889399059
+        },
+        {
+          "harmonic": 2,
+          "target_hz": 324.1899733333333,
+          "tolerance_hz": 6.483799466666666,
+          "peak_hz": 318.0,
+          "peak_amplitude": 0.0012895726009166401,
+          "peak_to_background": 2.3136259414170297
+        },
+        {
+          "harmonic": 3,
+          "target_hz": 486.28495999999996,
+          "tolerance_hz": 9.7256992,
+          "peak_hz": 479.0,
+          "peak_amplitude": 0.001934371020453944,
+          "peak_to_background": 3.470460655000279
+        }
+      ]
+    }
+  }
+]
